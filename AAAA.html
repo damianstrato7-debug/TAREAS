@@ -27,11 +27,34 @@
       align-items: center;
       margin-bottom: 20px;
       border-bottom: 4px solid var(--accent-blue);
+      flex-wrap: wrap;
+      gap: 15px;
     }
     .header-title h1 { font-size: 1.4rem; font-weight: 700; }
     .header-title p { font-size: 0.85rem; color: #94a3b8; margin-top: 2px; }
-    .user-badge { background-color: #1e293b; border: 1px solid #334155; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
-    .user-badge strong { color: #38bdf8; }
+    
+    /* Selector de Usuario */
+    .user-selector-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+    .user-selector-container label { font-size: 0.85rem; color: #94a3b8; font-weight: 600; }
+    .user-select {
+      background-color: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
 
     /* Controls */
     .controls-bar {
@@ -56,6 +79,7 @@
       background-color: #f1f5f9;
       color: #475569;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
     .btn-filter.active { background-color: var(--accent-blue); color: white; border-color: var(--accent-blue); }
     .btn-primary { background-color: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
@@ -106,14 +130,21 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header con Selector de Usuario -->
   <header class="header">
     <div class="header-title">
       <h1>🛠️ CAD & IT Task Flow</h1>
       <p>Sistema de Gestión de Proyectos, Desarrollo y TDD — Oficina Técnica</p>
     </div>
-    <div class="user-badge">
-      Usuario: <strong>Guillermo Bunting (JEFE)</strong>
+    
+    <div class="user-selector-container">
+      <label for="select-sesion">👤 Usuario activo:</label>
+      <select id="select-sesion" class="user-select">
+        <option value="usr_guillermo">Guillermo Bunting (JEFE)</option>
+        <option value="usr_damian">Damián Alvarez (D.CAD)</option>
+        <option value="usr_federico">Federico Menoyo (D.CAD)</option>
+        <option value="usr_german">Germán Bendazzi (IT)</option>
+      </select>
     </div>
   </header>
 
@@ -201,7 +232,7 @@
   <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCCz7lVrcFl0k-ETlAfAuzyDGFMkeH0jdI",
@@ -219,7 +250,7 @@
 
     let proyectosCache = {};
     let filtroActual = 'TODOS';
-    const usuarioSesion = "usr_guillermo";
+    let usuarioSesion = localStorage.getItem('usuarioSesion') || "usr_guillermo";
 
     // Nombres del Equipo
     const usuariosMap = {
@@ -227,6 +258,16 @@
       'usr_damian': 'Damián A.',
       'usr_federico': 'Federico M.',
       'usr_german': 'Germán B.'
+    };
+
+    // Configurar Selector de Usuario
+    const selectorSesion = document.getElementById('select-sesion');
+    selectorSesion.value = usuarioSesion;
+
+    selectorSesion.onchange = (e) => {
+      usuarioSesion = e.target.value;
+      localStorage.setItem('usuarioSesion', usuarioSesion);
+      renderizarTabla();
     };
 
     // Escuchar Firebase Realtime
@@ -308,6 +349,7 @@
         tipo: tipo,
         asignadoA: asignado,
         prioridad: prioridad,
+        creadoPor: usuarioSesion,
         etapaActual: tipo === 'MICRO_TAREA' ? 'EN_PROCESO' : 'DISENO',
         estadoRevision: 'EN_PROGRESO',
         gestionIT: {
