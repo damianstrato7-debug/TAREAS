@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAD & IT Task Flow</title>
+  <title>Gestión de Tareas - Damián Alvarez</title>
   <style>
     :root {
       --bg-main: #f8fafc;
@@ -33,28 +33,15 @@
     .header-title h1 { font-size: 1.4rem; font-weight: 700; }
     .header-title p { font-size: 0.85rem; color: #94a3b8; margin-top: 2px; }
     
-    /* Selector de Usuario */
-    .user-selector-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .user-badge {
       background-color: #1e293b;
       border: 1px solid #334155;
       padding: 6px 14px;
       border-radius: 20px;
-    }
-    .user-selector-container label { font-size: 0.85rem; color: #94a3b8; font-weight: 600; }
-    .user-select {
-      background-color: #0f172a;
-      color: #38bdf8;
-      border: 1px solid #0284c7;
-      border-radius: 12px;
-      padding: 4px 10px;
       font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      outline: none;
+      color: #94a3b8;
     }
+    .user-badge strong { color: #38bdf8; }
 
     /* Controls */
     .controls-bar {
@@ -130,34 +117,29 @@
 </head>
 <body>
 
-  <!-- Header con Selector de Usuario -->
+  <!-- Header -->
   <header class="header">
     <div class="header-title">
-      <h1>🛠️ CAD & IT Task Flow</h1>
-      <p>Sistema de Gestión de Proyectos, Desarrollo y TDD — Oficina Técnica</p>
+      <h1>🛠️ Mis Proyectos y Tareas</h1>
+      <p>Panel Personal de Control de Ingeniería, Desarrollo y TDD</p>
     </div>
     
-    <div class="user-selector-container">
-      <label for="select-sesion">👤 Usuario activo:</label>
-      <select id="select-sesion" class="user-select">
-        <option value="usr_guillermo">Guillermo Bunting (JEFE)</option>
-        <option value="usr_damian">Damián Alvarez (D.CAD)</option>
-        <option value="usr_federico">Federico Menoyo (D.CAD)</option>
-        <option value="usr_german">Germán Bendazzi (IT)</option>
-      </select>
+    <div class="user-badge">
+      Usuario: <strong>Damián Alvarez</strong>
     </div>
   </header>
 
   <!-- Control Bar -->
   <div class="controls-bar">
     <div class="filters-group">
-      <button class="btn-filter active" id="flt-todos">Todos</button>
-      <button class="btn-filter" id="flt-mis">Mis Tareas</button>
-      <button class="btn-filter" id="flt-aprob">Pendientes Aprobación</button>
-      <button class="btn-filter" id="flt-it">Windchill / MIX (Germán)</button>
+      <button class="btn-filter active" id="flt-todos">Todas</button>
+      <button class="btn-filter" id="flt-diseno">1. En Diseño</button>
+      <button class="btn-filter" id="flt-liberacion">2. En Liberación</button>
+      <button class="btn-filter" id="flt-implementacion">3. Implementación</button>
+      <button class="btn-filter" id="flt-it">Pendientes IT (Windchill/MIX)</button>
       <button class="btn-filter" id="flt-micro">Micro-tareas</button>
     </div>
-    <button class="btn-primary" id="btn-abrir-modal">+ Nuevo Proyecto</button>
+    <button class="btn-primary" id="btn-abrir-modal">+ Nueva Tarea</button>
   </div>
 
   <!-- Table -->
@@ -168,14 +150,13 @@
           <th>Código</th>
           <th>Proyecto / Tarea</th>
           <th>Tipo</th>
-          <th>Asignado</th>
           <th>Etapa Actual</th>
-          <th>IT (Windchill / MIX)</th>
+          <th>Soporte IT (Windchill / MIX)</th>
           <th>Prioridad</th>
         </tr>
       </thead>
       <tbody id="tabla-proyectos-body">
-        <tr><td colspan="7" style="text-align:center; padding:20px; color:#94a3b8;">Cargando tareas desde Firebase...</td></tr>
+        <tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Cargando tus tareas desde Firebase...</td></tr>
       </tbody>
     </table>
   </div>
@@ -183,30 +164,21 @@
   <!-- Modal Crear Proyecto -->
   <div class="modal-overlay" id="modal-proyecto">
     <div class="modal-card">
-      <h2>+ Nuevo Proyecto / Micro-tarea</h2>
+      <h2>+ Cargar Nueva Tarea / Proyecto</h2>
       <form id="form-nuevo-proyecto">
         <div class="form-group">
           <label>Título del Proyecto / Tarea</label>
           <input type="text" id="input-titulo" placeholder="Ej: Rediseño Soporte Batería" required>
         </div>
         <div class="form-group">
-          <label>Descripción / Observaciones (Opcional)</label>
-          <textarea id="input-desc" rows="2" placeholder="Ej: CN #8841 - Puesta en marcha..."></textarea>
+          <label>Descripción / Detalle (Opcional)</label>
+          <textarea id="input-desc" rows="2" placeholder="Ej: CN #8841 - Ajuste de geometrías..."></textarea>
         </div>
         <div class="form-group">
           <label>Tipo</label>
           <select id="select-tipo">
             <option value="PROYECTO">Proyecto (3 Etapas)</option>
-            <option value="MICRO_TAREA">Micro-tarea (Soporte/Impresión 3D)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Asignado A</label>
-          <select id="select-asignado">
-            <option value="usr_damian">Damián Alvarez (D.CAD)</option>
-            <option value="usr_federico">Federico Menoyo (D.CAD)</option>
-            <option value="usr_german">Germán Bendazzi (IT)</option>
-            <option value="usr_guillermo">Guillermo Bunting (JEFE)</option>
+            <option value="MICRO_TAREA">Micro-tarea (Gage / Dispositivo / Impresión 3D)</option>
           </select>
         </div>
         <div class="form-group">
@@ -219,7 +191,7 @@
         </div>
         <div class="form-group checkbox-group">
           <input type="checkbox" id="chk-it">
-          <label for="chk-it">¿Requiere nuevos artículos en Windchill / MIX?</label>
+          <label for="chk-it">¿Requiere soporte de IT (Códigos Windchill / MIX)?</label>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="btn-cerrar-modal">Cancelar</button>
@@ -250,25 +222,6 @@
 
     let proyectosCache = {};
     let filtroActual = 'TODOS';
-    let usuarioSesion = localStorage.getItem('usuarioSesion') || "usr_guillermo";
-
-    // Nombres del Equipo
-    const usuariosMap = {
-      'usr_guillermo': 'Guillermo B.',
-      'usr_damian': 'Damián A.',
-      'usr_federico': 'Federico M.',
-      'usr_german': 'Germán B.'
-    };
-
-    // Configurar Selector de Usuario
-    const selectorSesion = document.getElementById('select-sesion');
-    selectorSesion.value = usuarioSesion;
-
-    selectorSesion.onchange = (e) => {
-      usuarioSesion = e.target.value;
-      localStorage.setItem('usuarioSesion', usuarioSesion);
-      renderizarTabla();
-    };
 
     // Escuchar Firebase Realtime
     onValue(ref(db, 'proyectos'), (snapshot) => {
@@ -284,15 +237,16 @@
       const lista = Object.values(proyectosCache);
 
       const filtrados = lista.filter(item => {
-        if (filtroActual === 'MIS_TAREAS') return item.asignadoA === usuarioSesion;
-        if (filtroActual === 'PENDIENTE_APROBACION') return item.estadoRevision === 'PENDIENTE_APROBACION';
+        if (filtroActual === 'DISENO') return item.etapaActual === 'DISENO';
+        if (filtroActual === 'LIBERACION') return item.etapaActual === 'LIBERACION';
+        if (filtroActual === 'IMPLEMENTACION') return item.etapaActual === 'IMPLEMENTACION';
         if (filtroActual === 'SOPORTE_IT') return item.gestionIT && item.gestionIT.requiereNuevosArticulos && item.gestionIT.estadoMIX !== 'COMPLETADO';
         if (filtroActual === 'MICRO_TAREAS') return item.tipo === 'MICRO_TAREA';
         return true;
       });
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding: 20px;">No hay datos para esta vista.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding: 20px;">No hay tareas en esta vista.</td></tr>`;
         return;
       }
 
@@ -302,7 +256,6 @@
           <td><span class="code-tag">${item.id}</span></td>
           <td><strong>${item.titulo}</strong><br><small style="color: #64748b;">${item.descripcion || ''}</small></td>
           <td><span class="badge badge-micro">${item.tipo}</span></td>
-          <td>${usuariosMap[item.asignadoA] || item.asignadoA}</td>
           <td>${obtenerEtapaBadge(item.etapaActual)}</td>
           <td>${obtenerITBadge(item.gestionIT)}</td>
           <td><span class="badge badge-prio-${(item.prioridad || 'media').toLowerCase()}">${item.prioridad || 'Media'}</span></td>
@@ -321,7 +274,7 @@
     function obtenerITBadge(gestionIT) {
       if (!gestionIT || !gestionIT.requiereNuevosArticulos) return `<span class="badge badge-it-na">N/A</span>`;
       if (gestionIT.estadoMIX === 'COMPLETADO') return `<span class="badge badge-it-ok">✅ Completado</span>`;
-      return `<span class="badge badge-it-pend">⚠️ Pend. MIX / Windchill</span>`;
+      return `<span class="badge badge-it-pend">⚠️ Pend. Windchill/MIX</span>`;
     }
 
     // Manejo de Modal
@@ -336,7 +289,6 @@
       const titulo = document.getElementById('input-titulo').value;
       const desc = document.getElementById('input-desc').value;
       const tipo = document.getElementById('select-tipo').value;
-      const asignado = document.getElementById('select-asignado').value;
       const prioridad = document.getElementById('select-prioridad').value;
       const requiereIT = document.getElementById('chk-it').checked;
 
@@ -347,11 +299,9 @@
         titulo: titulo,
         descripcion: desc,
         tipo: tipo,
-        asignadoA: asignado,
+        asignadoA: "usr_damian",
         prioridad: prioridad,
-        creadoPor: usuarioSesion,
         etapaActual: tipo === 'MICRO_TAREA' ? 'EN_PROCESO' : 'DISENO',
-        estadoRevision: 'EN_PROGRESO',
         gestionIT: {
           requiereNuevosArticulos: requiereIT,
           estadoWindchill: requiereIT ? 'PENDIENTE' : 'NO_APLICA',
@@ -369,8 +319,9 @@
     // Manejo de Filtros
     const botonesFiltro = [
       { id: 'flt-todos', tipo: 'TODOS' },
-      { id: 'flt-mis', tipo: 'MIS_TAREAS' },
-      { id: 'flt-aprob', tipo: 'PENDIENTE_APROBACION' },
+      { id: 'flt-diseno', tipo: 'DISENO' },
+      { id: 'flt-liberacion', tipo: 'LIBERACION' },
+      { id: 'flt-implementacion', tipo: 'IMPLEMENTACION' },
       { id: 'flt-it', tipo: 'SOPORTE_IT' },
       { id: 'flt-micro', tipo: 'MICRO_TAREAS' }
     ];
