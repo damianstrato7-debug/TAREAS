@@ -3,173 +3,191 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Tareas - Damián Alvarez</title>
+  <title>CAD Workstation - Control Damián Alvarez</title>
   <style>
     :root {
-      --bg-main: #f8fafc;
-      --header-bg: #0f172a;
-      --accent-blue: #0284c7;
-      --border-color: #cbd5e1;
-      --text-dark: #1e293b;
+      --cad-bg: #1e1e1e;
+      --cad-panel: #252526;
+      --cad-header: #181818;
+      --cad-border: #3c3c3c;
+      --cad-cyan: #00f2fe;
+      --cad-yellow: #eab308;
+      --cad-red: #ef4444;
+      --cad-green: #22c55e;
+      --cad-text: #d4d4d4;
+      --cad-text-dim: #858585;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-dark); padding: 20px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Consolas', 'Courier New', monospace, sans-serif; }
+    body { background-color: var(--cad-bg); color: var(--cad-text); padding: 20px; }
 
-    /* Header */
+    /* Header Estilo CAD */
     .header {
-      background-color: var(--header-bg);
-      color: white;
-      padding: 16px 24px;
-      border-radius: 8px;
+      background-color: var(--cad-header);
+      color: var(--cad-text);
+      padding: 14px 20px;
+      border-radius: 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 4px solid var(--accent-blue);
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .header-title h1 { font-size: 1.4rem; font-weight: 700; }
-    .header-title p { font-size: 0.85rem; color: #94a3b8; margin-top: 2px; }
-    
-    .user-badge {
-      background-color: #1e293b;
-      border: 1px solid #334155;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      color: #94a3b8;
-    }
-    .user-badge strong { color: #38bdf8; }
-
-    /* Controls */
-    .controls-bar {
-      background-color: white;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      margin-bottom: 16px;
+      border: 1px solid var(--cad-border);
+      border-left: 5px solid var(--cad-cyan);
       flex-wrap: wrap;
       gap: 10px;
     }
-    .filters-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-filter {
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: 1px solid var(--border-color);
-      background-color: #f1f5f9;
-      color: #475569;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .header-title h1 { font-size: 1.2rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .header-title p { font-size: 0.75rem; color: var(--cad-text-dim); margin-top: 2px; }
+    
+    .user-badge {
+      background-color: var(--cad-panel);
+      border: 1px solid var(--cad-border);
+      padding: 4px 12px;
+      border-radius: 3px;
+      font-size: 0.8rem;
+      color: var(--cad-text-dim);
     }
-    .btn-filter.active { background-color: var(--accent-blue); color: white; border-color: var(--accent-blue); }
-    .btn-primary { background-color: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+    .user-badge strong { color: var(--cad-cyan); }
 
-    /* Table */
-    .table-container { background-color: white; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto; margin-bottom: 20px; }
+    /* Controls Bar */
+    .controls-bar {
+      background-color: var(--cad-panel);
+      border: 1px solid var(--cad-border);
+      border-radius: 4px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .filter-submenu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-submenu label { font-size: 0.8rem; color: var(--cad-text-dim); text-transform: uppercase; }
+    .cad-select {
+      background-color: var(--cad-bg);
+      color: var(--cad-cyan);
+      border: 1px solid var(--cad-border);
+      padding: 6px 12px;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .btn-primary { background-color: #0284c7; color: white; border: 1px solid #38bdf8; padding: 6px 14px; border-radius: 3px; font-weight: bold; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; }
+    .btn-primary:hover { background-color: #0369a1; }
+
+    /* Table CAD */
+    .table-container { background-color: var(--cad-panel); border: 1px solid var(--cad-border); border-radius: 4px; overflow-x: auto; margin-bottom: 16px; }
     table.smart-table { width: 100%; border-collapse: collapse; text-align: left; }
-    table.smart-table th { background-color: #f1f5f9; color: #334155; font-size: 0.8rem; text-transform: uppercase; padding: 12px 16px; border-bottom: 2px solid var(--border-color); }
-    table.smart-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+    table.smart-table th { background-color: var(--cad-header); color: var(--cad-cyan); font-size: 0.75rem; text-transform: uppercase; padding: 10px 14px; border-bottom: 1px solid var(--cad-border); }
+    table.smart-table td { padding: 10px 14px; border-bottom: 1px solid var(--cad-border); font-size: 0.85rem; }
     table.smart-table tr.row-item { cursor: pointer; transition: background 0.15s; }
-    table.smart-table tr.row-item:hover { background-color: #f1f5f9; }
-    table.smart-table tr.selected { background-color: #e0f2fe !important; }
+    table.smart-table tr.row-item:hover { background-color: #2a2d2e; }
+    table.smart-table tr.selected { background-color: #37373d !important; border-left: 3px solid var(--cad-yellow); }
 
     /* Badges */
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-    .badge-diseno { background-color: #fef3c7; color: #b45309; }
-    .badge-liberacion { background-color: #e0f2fe; color: #0369a1; }
-    .badge-implementacion { background-color: #f3e8ff; color: #6b21a8; }
-    .badge-micro { background-color: #f1f5f9; color: #475569; }
-    .badge-prio-alta { background-color: #fee2e2; color: #b91c1c; }
-    .badge-prio-media { background-color: #ffedd5; color: #c2410c; }
-    .badge-prio-baja { background-color: #f0fdf4; color: #15803d; }
-    .code-tag { font-family: monospace; font-weight: bold; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+    .badge-diseno { background-color: #451a03; color: #fde047; border: 1px solid #78350f; }
+    .badge-liberacion { background-color: #0c4a6e; color: #38bdf8; border: 1px solid #0369a1; }
+    .badge-implementacion { background-color: #3b0764; color: #e9d5ff; border: 1px solid #6b21a8; }
+    .badge-micro { background-color: #27272a; color: #a1a1aa; border: 1px solid #3f3f46; }
+    .badge-prio-alta { background-color: #450a0a; color: #fca5a5; border: 1px solid #991b1b; }
+    .badge-prio-media { background-color: #431407; color: #fdba74; border: 1px solid #9a3412; }
+    .badge-prio-baja { background-color: #052e16; color: #86efac; border: 1px solid #166534; }
+    .code-tag { font-family: monospace; font-weight: bold; color: var(--cad-cyan); background-color: var(--cad-bg); padding: 2px 6px; border-radius: 2px; border: 1px solid var(--cad-border); }
 
-    /* Detail Panel */
+    /* Detail Panel CAD */
     .detail-panel {
-      background-color: white;
-      border: 2px solid var(--accent-blue);
-      border-radius: 8px;
-      padding: 20px;
+      background-color: var(--cad-panel);
+      border: 1px solid var(--cad-cyan);
+      border-radius: 4px;
+      padding: 16px;
       display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      margin-bottom: 24px;
     }
     .detail-panel.active { display: block; }
-    .detail-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    .detail-header h3 { font-size: 1.1rem; color: var(--header-bg); }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cad-border); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+    .detail-header h3 { font-size: 1rem; color: #fff; }
     
     .checklist-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
     }
     .checklist-card {
-      background-color: #f8fafc;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 14px;
+      background-color: var(--cad-bg);
+      border: 1px solid var(--cad-border);
+      border-radius: 3px;
+      padding: 12px;
     }
-    .checklist-card h4 { font-size: 0.85rem; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    .check-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.88rem; cursor: pointer; }
-    .check-item input { width: 16px; height: 16px; cursor: pointer; }
+    .checklist-card h4 { font-size: 0.75rem; color: var(--cad-cyan); text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid var(--cad-border); padding-bottom: 4px; letter-spacing: 0.5px; }
+    .check-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: var(--cad-text); }
+    .check-item input { accent-color: var(--cad-cyan); cursor: pointer; }
 
-    .notes-section { margin-top: 15px; }
-    .notes-section textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; }
+    .notes-section textarea {
+      width: 100%; padding: 8px; background-color: var(--cad-bg); color: #fff; border: 1px solid var(--cad-border); border-radius: 3px; font-size: 0.8rem;
+    }
 
     /* Modal Styles */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(0, 0, 0, 0.8);
       display: none; justify-content: center; align-items: center; z-index: 1000;
     }
     .modal-overlay.active { display: flex; }
-    .modal-card { background: white; border-radius: 8px; width: 100%; max-width: 500px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-    .modal-card h2 { margin-bottom: 16px; font-size: 1.2rem; color: var(--header-bg); }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; }
-    .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-    .checkbox-group input { width: auto; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-    .btn-secondary { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-    .btn-action { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+    .modal-card { background: var(--cad-panel); border: 1px solid var(--cad-cyan); border-radius: 4px; width: 100%; max-width: 480px; padding: 20px; color: var(--cad-text); }
+    .modal-card h2 { margin-bottom: 14px; font-size: 1.1rem; color: #fff; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 0.75rem; color: var(--cad-text-dim); text-transform: uppercase; margin-bottom: 4px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 8px; background-color: var(--cad-bg); color: #fff; border: 1px solid var(--cad-border); border-radius: 3px; font-size: 0.85rem;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+    
+    /* Buttons CAD */
+    .btn-secondary { background: #333333; color: #ccc; border: 1px solid var(--cad-border); padding: 5px 12px; border-radius: 3px; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; }
+    .btn-action { background: #0284c7; color: white; border: none; padding: 5px 12px; border-radius: 3px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; }
+    .btn-danger { background: var(--cad-red); color: white; border: none; padding: 5px 12px; border-radius: 3px; font-weight: bold; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; }
+    .btn-danger:hover { background: #dc2626; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header CAD -->
   <header class="header">
     <div class="header-title">
-      <h1>🛠️ Mis Proyectos y Tareas</h1>
-      <p>Panel Personal de Control de Ingeniería, Desarrollo y TDD</p>
+      <h1>[CAD WORKSTATION] - Panel Damián Alvarez</h1>
+      <p>Gestión de Tareas, Planos y Secuencia TDD</p>
     </div>
-    
-    <div class="user-badge">
-      Usuario: <strong>Damián Alvarez</strong>
-    </div>
+    <div class="user-badge">STATUS: <strong>ONLINE</strong></div>
   </header>
 
-  <!-- Control Bar -->
+  <!-- Controls Bar con Submenú de Filtros -->
   <div class="controls-bar">
-    <div class="filters-group">
-      <button class="btn-filter active" id="flt-todos">Todas</button>
-      <button class="btn-filter" id="flt-diseno">1. En Diseño</button>
-      <button class="btn-filter" id="flt-liberacion">2. En Liberación</button>
-      <button class="btn-filter" id="flt-implementacion">3. Implementación</button>
-      <button class="btn-filter" id="flt-micro">Micro-tareas</button>
+    <div class="filter-submenu">
+      <label for="select-filtro-etapa">🔍 Filtrar Vista:</label>
+      <select id="select-filtro-etapa" class="cad-select">
+        <option value="TODOS">--- MOSTRAR TODAS ---</option>
+        <option value="DISENO">1. En Diseño</option>
+        <option value="LIBERACION">2. En Liberación</option>
+        <option value="IMPLEMENTACION">3. Implementación</option>
+        <option value="MICRO_TAREAS">Micro-tareas</option>
+      </select>
     </div>
+
     <button class="btn-primary" id="btn-abrir-modal">+ Nueva Tarea</button>
   </div>
 
-  <!-- Table -->
+  <!-- Table CAD -->
   <div class="table-container">
     <table class="smart-table">
       <thead>
@@ -178,26 +196,27 @@
           <th>Proyecto / Tarea</th>
           <th>Tipo</th>
           <th>Etapa Actual</th>
-          <th>Progreso Checklists</th>
+          <th>Checklist</th>
           <th>Prioridad</th>
         </tr>
       </thead>
       <tbody id="tabla-proyectos-body">
-        <tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Cargando tus tareas desde Firebase...</td></tr>
+        <tr><td colspan="6" style="text-align:center; padding:20px; color:var(--cad-text-dim);">Cargando base de datos CAD...</td></tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Panel de Detalle Desplegable -->
+  <!-- Panel de Detalle Desplegable CAD -->
   <div class="detail-panel" id="panel-detalle">
     <div class="detail-header">
       <div>
         <span class="code-tag" id="panel-codigo">PRJ-000</span>
         <h3 id="panel-titulo" style="display:inline; margin-left:8px;">Título de la Tarea</h3>
       </div>
-      <div>
+      <div style="display: flex; gap: 8px;">
         <button class="btn-action" id="btn-avanzar-etapa">Avanzar Etapa ➔</button>
-        <button class="btn-secondary" id="btn-cerrar-panel" style="padding:6px 12px; font-size:0.8rem;">Cerrar ✕</button>
+        <button class="btn-danger" id="btn-eliminar-tarea">Eliminar 🗑️</button>
+        <button class="btn-secondary" id="btn-cerrar-panel">✕ Cerrar</button>
       </div>
     </div>
 
@@ -216,41 +235,41 @@
       <div class="checklist-card">
         <h4>2. Soporte IT</h4>
         <label class="check-item"><input type="checkbox" id="chk-reservaCodigos"> Reserva de códigos</label>
-        <label class="check-item"><input type="checkbox" id="chk-generacionWtparts"> Generación de Wtparts</label>
+        <label class="check-item"><input type="checkbox" id="chk-generacionWtparts"> Generación Wtparts</label>
       </div>
 
       <!-- Etapa 3 -->
       <div class="checklist-card">
         <h4>3. Liberación</h4>
         <label class="check-item"><input type="checkbox" id="chk-cnReleased"> CN Released</label>
-        <label class="check-item"><input type="checkbox" id="chk-publicacionPlanos"> Publicación de Planos</label>
+        <label class="check-item"><input type="checkbox" id="chk-publicacionPlanos"> Publicación Planos</label>
       </div>
     </div>
 
     <div class="notes-section">
-      <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">Notas y Observaciones Rápidas:</label>
-      <textarea id="txt-notas" rows="2" placeholder="Ej: CN #8841 emitido, falta confirmación de IT..."></textarea>
+      <label style="font-size:0.75rem; color:var(--cad-text-dim); text-transform:uppercase; display:block; margin-bottom:4px;">Notas / Registro de Cambios:</label>
+      <textarea id="txt-notas" rows="2" placeholder="Ej: CN #8841 - Modificación de caras según solicitud..."></textarea>
     </div>
   </div>
 
-  <!-- Modal Crear Proyecto -->
+  <!-- Modal Nueva Tarea -->
   <div class="modal-overlay" id="modal-proyecto">
     <div class="modal-card">
-      <h2>+ Cargar Nueva Tarea / Proyecto</h2>
+      <h2>+ Cargar Nueva Tarea</h2>
       <form id="form-nuevo-proyecto">
         <div class="form-group">
           <label>Título del Proyecto / Tarea</label>
           <input type="text" id="input-titulo" placeholder="Ej: Rediseño Soporte Batería" required>
         </div>
         <div class="form-group">
-          <label>Descripción / Detalle (Opcional)</label>
+          <label>Descripción (Opcional)</label>
           <textarea id="input-desc" rows="2" placeholder="Ej: CN #8841 - Ajuste de geometrías..."></textarea>
         </div>
         <div class="form-group">
           <label>Tipo</label>
           <select id="select-tipo">
             <option value="PROYECTO">Proyecto (3 Etapas)</option>
-            <option value="MICRO_TAREA">Micro-tarea (Gage / Dispositivo / Impresión 3D)</option>
+            <option value="MICRO_TAREA">Micro-tarea (Dispositivo / Gage / 3D)</option>
           </select>
         </div>
         <div class="form-group">
@@ -263,7 +282,7 @@
         </div>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="btn-cerrar-modal">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar Tarea</button>
+          <button type="submit" class="btn-primary">Guardar</button>
         </div>
       </form>
     </div>
@@ -272,7 +291,7 @@
   <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCCz7lVrcFl0k-ETlAfAuzyDGFMkeH0jdI",
@@ -304,6 +323,10 @@
       renderizarTabla();
       if (proyectoSeleccionadoId && proyectosCache[proyectoSeleccionadoId]) {
         cargarDetalle(proyectoSeleccionadoId);
+      } else if (proyectoSeleccionadoId && !proyectosCache[proyectoSeleccionadoId]) {
+        // Si fue eliminada, cerrar el panel
+        document.getElementById('panel-detalle').classList.remove('active');
+        proyectoSeleccionadoId = null;
       }
     });
 
@@ -323,7 +346,7 @@
       });
 
       if (filtrados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding: 20px;">No hay tareas en esta vista.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--cad-text-dim); padding: 20px;">No hay registros para este filtro.</td></tr>`;
         return;
       }
 
@@ -331,18 +354,16 @@
         const tr = document.createElement('tr');
         tr.className = 'row-item' + (item.id === proyectoSeleccionadoId ? ' selected' : '');
         
-        // Calcular porcentaje de checklist
         const checks = item.checklists || {};
         const marcados = checklistKeys.filter(k => checks[k]).length;
         const total = checklistKeys.length;
-        const pct = Math.round((marcados / total) * 100);
 
         tr.innerHTML = `
           <td><span class="code-tag">${item.id}</span></td>
-          <td><strong>${item.titulo}</strong><br><small style="color: #64748b;">${item.descripcion || ''}</small></td>
+          <td><strong>${item.titulo}</strong><br><small style="color: var(--cad-text-dim);">${item.descripcion || ''}</small></td>
           <td><span class="badge badge-micro">${item.tipo}</span></td>
           <td>${obtenerEtapaBadge(item.etapaActual)}</td>
-          <td><small style="font-weight:bold;">${marcados}/${total} (${pct}%)</small></td>
+          <td><small style="font-weight:bold; color: var(--cad-cyan);">${marcados}/${total}</small></td>
           <td><span class="badge badge-prio-${(item.prioridad || 'media').toLowerCase()}">${item.prioridad || 'Media'}</span></td>
         `;
 
@@ -357,13 +378,13 @@
     }
 
     function obtenerEtapaBadge(etapa) {
-      if (etapa === 'DISENO') return `<span class="badge badge-diseno">1. En Diseño</span>`;
-      if (etapa === 'LIBERACION') return `<span class="badge badge-liberacion">2. En Liberación</span>`;
+      if (etapa === 'DISENO') return `<span class="badge badge-diseno">1. Diseño</span>`;
+      if (etapa === 'LIBERACION') return `<span class="badge badge-liberacion">2. Liberación</span>`;
       if (etapa === 'IMPLEMENTACION') return `<span class="badge badge-implementacion">3. Implementación</span>`;
       return `<span class="badge badge-micro">${etapa || 'En Proceso'}</span>`;
     }
 
-    // Cargar Datos en el Panel de Detalle
+    // Cargar Detalle
     function cargarDetalle(id) {
       const item = proyectosCache[id];
       if (!item) return;
@@ -381,7 +402,7 @@
       document.getElementById('panel-detalle').classList.add('active');
     }
 
-    // Eventos de los Checkboxes del Panel
+    // Checkboxes sync
     checklistKeys.forEach(k => {
       const el = document.getElementById(`chk-${k}`);
       if (el) {
@@ -417,6 +438,20 @@
       });
     };
 
+    // ELIMINAR TAREA (Nueva función)
+    document.getElementById('btn-eliminar-tarea').onclick = () => {
+      if (!proyectoSeleccionadoId) return;
+      
+      const confirmacion = confirm(`¿Estás seguro de eliminar la tarea ${proyectoSeleccionadoId}?`);
+      if (confirmacion) {
+        remove(ref(db, `proyectos/${proyectoSeleccionadoId}`))
+          .then(() => {
+            document.getElementById('panel-detalle').classList.remove('active');
+            proyectoSeleccionadoId = null;
+          });
+      }
+    };
+
     // Cerrar Panel
     document.getElementById('btn-cerrar-panel').onclick = () => {
       document.getElementById('panel-detalle').classList.remove('active');
@@ -424,12 +459,18 @@
       renderizarTabla();
     };
 
-    // Manejo de Modal
+    // Submenú Filtro Select
+    document.getElementById('select-filtro-etapa').onchange = (e) => {
+      filtroActual = e.target.value;
+      renderizarTabla();
+    };
+
+    // Modal
     const modal = document.getElementById('modal-proyecto');
     document.getElementById('btn-abrir-modal').onclick = () => modal.classList.add('active');
     document.getElementById('btn-cerrar-modal').onclick = () => modal.classList.remove('active');
 
-    // Guardar Tarea en Firebase
+    // Guardar Tarea
     document.getElementById('form-nuevo-proyecto').onsubmit = (e) => {
       e.preventDefault();
 
@@ -458,24 +499,6 @@
           document.getElementById('form-nuevo-proyecto').reset();
         });
     };
-
-    // Manejo de Filtros
-    const botonesFiltro = [
-      { id: 'flt-todos', tipo: 'TODOS' },
-      { id: 'flt-diseno', tipo: 'DISENO' },
-      { id: 'flt-liberacion', tipo: 'LIBERACION' },
-      { id: 'flt-implementacion', tipo: 'IMPLEMENTACION' },
-      { id: 'flt-micro', tipo: 'MICRO_TAREAS' }
-    ];
-
-    botonesFiltro.forEach(b => {
-      document.getElementById(b.id).onclick = (e) => {
-        document.querySelectorAll('.btn-filter').forEach(x => x.classList.remove('active'));
-        e.target.classList.add('active');
-        filtroActual = b.tipo;
-        renderizarTabla();
-      };
-    });
   </script>
 </body>
 </html>
