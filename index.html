@@ -72,11 +72,13 @@
     .btn-primary { background-color: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 
     /* Table */
-    .table-container { background-color: white; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto; }
+    .table-container { background-color: white; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto; margin-bottom: 20px; }
     table.smart-table { width: 100%; border-collapse: collapse; text-align: left; }
     table.smart-table th { background-color: #f1f5f9; color: #334155; font-size: 0.8rem; text-transform: uppercase; padding: 12px 16px; border-bottom: 2px solid var(--border-color); }
     table.smart-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
-    table.smart-table tr:hover { background-color: #f8fafc; }
+    table.smart-table tr.row-item { cursor: pointer; transition: background 0.15s; }
+    table.smart-table tr.row-item:hover { background-color: #f1f5f9; }
+    table.smart-table tr.selected { background-color: #e0f2fe !important; }
 
     /* Badges */
     .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
@@ -87,10 +89,40 @@
     .badge-prio-alta { background-color: #fee2e2; color: #b91c1c; }
     .badge-prio-media { background-color: #ffedd5; color: #c2410c; }
     .badge-prio-baja { background-color: #f0fdf4; color: #15803d; }
-    .badge-it-ok { background-color: #dcfce7; color: #15803d; }
-    .badge-it-pend { background-color: #fef2f2; color: #dc2626; }
-    .badge-it-na { background-color: #f1f5f9; color: #94a3b8; }
     .code-tag { font-family: monospace; font-weight: bold; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color); }
+
+    /* Detail Panel */
+    .detail-panel {
+      background-color: white;
+      border: 2px solid var(--accent-blue);
+      border-radius: 8px;
+      padding: 20px;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+    .detail-panel.active { display: block; }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .detail-header h3 { font-size: 1.1rem; color: var(--header-bg); }
+    
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .checklist-card {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .checklist-card h4 { font-size: 0.85rem; color: var(--accent-blue); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+    .check-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.88rem; cursor: pointer; }
+    .check-item input { width: 16px; height: 16px; cursor: pointer; }
+
+    .notes-section { margin-top: 15px; }
+    .notes-section textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; }
 
     /* Modal Styles */
     .modal-overlay {
@@ -99,20 +131,16 @@
       display: none; justify-content: center; align-items: center; z-index: 1000;
     }
     .modal-overlay.active { display: flex; }
-    .modal-card {
-      background: white; border-radius: 8px; width: 100%; max-width: 500px; padding: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
+    .modal-card { background: white; border-radius: 8px; width: 100%; max-width: 500px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     .modal-card h2 { margin-bottom: 16px; font-size: 1.2rem; color: var(--header-bg); }
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;
-    }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; }
     .checkbox-group { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
     .checkbox-group input { width: auto; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     .btn-secondary { background: #e2e8f0; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-action { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
   </style>
 </head>
 <body>
@@ -136,7 +164,6 @@
       <button class="btn-filter" id="flt-diseno">1. En Diseño</button>
       <button class="btn-filter" id="flt-liberacion">2. En Liberación</button>
       <button class="btn-filter" id="flt-implementacion">3. Implementación</button>
-      <button class="btn-filter" id="flt-it">Pendientes IT (Windchill/MIX)</button>
       <button class="btn-filter" id="flt-micro">Micro-tareas</button>
     </div>
     <button class="btn-primary" id="btn-abrir-modal">+ Nueva Tarea</button>
@@ -151,7 +178,7 @@
           <th>Proyecto / Tarea</th>
           <th>Tipo</th>
           <th>Etapa Actual</th>
-          <th>Soporte IT (Windchill / MIX)</th>
+          <th>Progreso Checklists</th>
           <th>Prioridad</th>
         </tr>
       </thead>
@@ -159,6 +186,51 @@
         <tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">Cargando tus tareas desde Firebase...</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Panel de Detalle Desplegable -->
+  <div class="detail-panel" id="panel-detalle">
+    <div class="detail-header">
+      <div>
+        <span class="code-tag" id="panel-codigo">PRJ-000</span>
+        <h3 id="panel-titulo" style="display:inline; margin-left:8px;">Título de la Tarea</h3>
+      </div>
+      <div>
+        <button class="btn-action" id="btn-avanzar-etapa">Avanzar Etapa ➔</button>
+        <button class="btn-secondary" id="btn-cerrar-panel" style="padding:6px 12px; font-size:0.8rem;">Cerrar ✕</button>
+      </div>
+    </div>
+
+    <!-- Checklists por Etapa -->
+    <div class="checklist-grid">
+      <!-- Etapa 1 -->
+      <div class="checklist-card">
+        <h4>1. Diseño</h4>
+        <label class="check-item"><input type="checkbox" id="chk-cnGenerado"> CN Generado</label>
+        <label class="check-item"><input type="checkbox" id="chk-modelado3D"> Modelado 3D</label>
+        <label class="check-item"><input type="checkbox" id="chk-plano2D"> Plano 2D / DRW / LAY</label>
+        <label class="check-item"><input type="checkbox" id="chk-montajeTDD"> Montaje TDD</label>
+      </div>
+
+      <!-- Etapa 2 -->
+      <div class="checklist-card">
+        <h4>2. Soporte IT</h4>
+        <label class="check-item"><input type="checkbox" id="chk-reservaCodigos"> Reserva de códigos</label>
+        <label class="check-item"><input type="checkbox" id="chk-generacionWtparts"> Generación de Wtparts</label>
+      </div>
+
+      <!-- Etapa 3 -->
+      <div class="checklist-card">
+        <h4>3. Liberación</h4>
+        <label class="check-item"><input type="checkbox" id="chk-cnReleased"> CN Released</label>
+        <label class="check-item"><input type="checkbox" id="chk-publicacionPlanos"> Publicación de Planos</label>
+      </div>
+    </div>
+
+    <div class="notes-section">
+      <label style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:4px;">Notas y Observaciones Rápidas:</label>
+      <textarea id="txt-notas" rows="2" placeholder="Ej: CN #8841 emitido, falta confirmación de IT..."></textarea>
+    </div>
   </div>
 
   <!-- Modal Crear Proyecto -->
@@ -189,10 +261,6 @@
             <option value="Baja">Baja</option>
           </select>
         </div>
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="chk-it">
-          <label for="chk-it">¿Requiere soporte de IT (Códigos Windchill / MIX)?</label>
-        </div>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" id="btn-cerrar-modal">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Tarea</button>
@@ -204,7 +272,7 @@
   <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCCz7lVrcFl0k-ETlAfAuzyDGFMkeH0jdI",
@@ -222,11 +290,21 @@
 
     let proyectosCache = {};
     let filtroActual = 'TODOS';
+    let proyectoSeleccionadoId = null;
+
+    const checklistKeys = [
+      'cnGenerado', 'modelado3D', 'plano2D', 'montajeTDD',
+      'reservaCodigos', 'generacionWtparts',
+      'cnReleased', 'publicacionPlanos'
+    ];
 
     // Escuchar Firebase Realtime
     onValue(ref(db, 'proyectos'), (snapshot) => {
       proyectosCache = snapshot.val() || {};
       renderizarTabla();
+      if (proyectoSeleccionadoId && proyectosCache[proyectoSeleccionadoId]) {
+        cargarDetalle(proyectoSeleccionadoId);
+      }
     });
 
     // Renderizar Tabla
@@ -240,7 +318,6 @@
         if (filtroActual === 'DISENO') return item.etapaActual === 'DISENO';
         if (filtroActual === 'LIBERACION') return item.etapaActual === 'LIBERACION';
         if (filtroActual === 'IMPLEMENTACION') return item.etapaActual === 'IMPLEMENTACION';
-        if (filtroActual === 'SOPORTE_IT') return item.gestionIT && item.gestionIT.requiereNuevosArticulos && item.gestionIT.estadoMIX !== 'COMPLETADO';
         if (filtroActual === 'MICRO_TAREAS') return item.tipo === 'MICRO_TAREA';
         return true;
       });
@@ -252,14 +329,29 @@
 
       filtrados.forEach(item => {
         const tr = document.createElement('tr');
+        tr.className = 'row-item' + (item.id === proyectoSeleccionadoId ? ' selected' : '');
+        
+        // Calcular porcentaje de checklist
+        const checks = item.checklists || {};
+        const marcados = checklistKeys.filter(k => checks[k]).length;
+        const total = checklistKeys.length;
+        const pct = Math.round((marcados / total) * 100);
+
         tr.innerHTML = `
           <td><span class="code-tag">${item.id}</span></td>
           <td><strong>${item.titulo}</strong><br><small style="color: #64748b;">${item.descripcion || ''}</small></td>
           <td><span class="badge badge-micro">${item.tipo}</span></td>
           <td>${obtenerEtapaBadge(item.etapaActual)}</td>
-          <td>${obtenerITBadge(item.gestionIT)}</td>
+          <td><small style="font-weight:bold;">${marcados}/${total} (${pct}%)</small></td>
           <td><span class="badge badge-prio-${(item.prioridad || 'media').toLowerCase()}">${item.prioridad || 'Media'}</span></td>
         `;
+
+        tr.onclick = () => {
+          proyectoSeleccionadoId = item.id;
+          renderizarTabla();
+          cargarDetalle(item.id);
+        };
+
         tbody.appendChild(tr);
       });
     }
@@ -271,11 +363,66 @@
       return `<span class="badge badge-micro">${etapa || 'En Proceso'}</span>`;
     }
 
-    function obtenerITBadge(gestionIT) {
-      if (!gestionIT || !gestionIT.requiereNuevosArticulos) return `<span class="badge badge-it-na">N/A</span>`;
-      if (gestionIT.estadoMIX === 'COMPLETADO') return `<span class="badge badge-it-ok">✅ Completado</span>`;
-      return `<span class="badge badge-it-pend">⚠️ Pend. Windchill/MIX</span>`;
+    // Cargar Datos en el Panel de Detalle
+    function cargarDetalle(id) {
+      const item = proyectosCache[id];
+      if (!item) return;
+
+      document.getElementById('panel-codigo').innerText = item.id;
+      document.getElementById('panel-titulo').innerText = item.titulo;
+      document.getElementById('txt-notas').value = item.notas || '';
+
+      const checks = item.checklists || {};
+      checklistKeys.forEach(k => {
+        const el = document.getElementById(`chk-${k}`);
+        if (el) el.checked = !!checks[k];
+      });
+
+      document.getElementById('panel-detalle').classList.add('active');
     }
+
+    // Eventos de los Checkboxes del Panel
+    checklistKeys.forEach(k => {
+      const el = document.getElementById(`chk-${k}`);
+      if (el) {
+        el.onchange = (e) => {
+          if (!proyectoSeleccionadoId) return;
+          update(ref(db, `proyectos/${proyectoSeleccionadoId}/checklists`), {
+            [k]: e.target.checked
+          });
+        };
+      }
+    });
+
+    // Guardar Notas
+    document.getElementById('txt-notas').onblur = (e) => {
+      if (!proyectoSeleccionadoId) return;
+      update(ref(db, `proyectos/${proyectoSeleccionadoId}`), {
+        notas: e.target.value
+      });
+    };
+
+    // Avanzar Etapa
+    document.getElementById('btn-avanzar-etapa').onclick = () => {
+      if (!proyectoSeleccionadoId) return;
+      const item = proyectosCache[proyectoSeleccionadoId];
+      let nuevaEtapa = 'DISENO';
+
+      if (item.etapaActual === 'DISENO') nuevaEtapa = 'LIBERACION';
+      else if (item.etapaActual === 'LIBERACION') nuevaEtapa = 'IMPLEMENTACION';
+      else nuevaEtapa = 'IMPLEMENTACION';
+
+      update(ref(db, `proyectos/${proyectoSeleccionadoId}`), {
+        etapaActual: nuevaEtapa
+      });
+    };
+
+    // Cerrar Panel
+    document.getElementById('btn-cerrar-panel').onclick = () => {
+      document.getElementById('panel-detalle').classList.remove('active');
+      proyectoSeleccionadoId = null;
+      renderizarTabla();
+    };
 
     // Manejo de Modal
     const modal = document.getElementById('modal-proyecto');
@@ -290,7 +437,6 @@
       const desc = document.getElementById('input-desc').value;
       const tipo = document.getElementById('select-tipo').value;
       const prioridad = document.getElementById('select-prioridad').value;
-      const requiereIT = document.getElementById('chk-it').checked;
 
       const idGenerado = 'PRJ-' + Math.floor(100 + Math.random() * 900);
 
@@ -302,11 +448,8 @@
         asignadoA: "usr_damian",
         prioridad: prioridad,
         etapaActual: tipo === 'MICRO_TAREA' ? 'EN_PROCESO' : 'DISENO',
-        gestionIT: {
-          requiereNuevosArticulos: requiereIT,
-          estadoWindchill: requiereIT ? 'PENDIENTE' : 'NO_APLICA',
-          estadoMIX: requiereIT ? 'PENDIENTE' : 'NO_APLICA'
-        }
+        checklists: {},
+        notas: ''
       };
 
       set(ref(db, `proyectos/${idGenerado}`), nuevaTarea)
@@ -322,7 +465,6 @@
       { id: 'flt-diseno', tipo: 'DISENO' },
       { id: 'flt-liberacion', tipo: 'LIBERACION' },
       { id: 'flt-implementacion', tipo: 'IMPLEMENTACION' },
-      { id: 'flt-it', tipo: 'SOPORTE_IT' },
       { id: 'flt-micro', tipo: 'MICRO_TAREAS' }
     ];
 
